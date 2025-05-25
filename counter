@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Mirip PowerPoint Dasar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure HTML and Body take full viewport height and width, and hide overflow */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* Prevent scrolling */
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background for the entire page */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top */
+        }
+        .container {
+            background-color: #ffffff; /* White background for the main content area */
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 2.5vh; /* Use viewport height for gaps */
+            width: 96vw; /* Take most of the viewport width */
+            height: 96vh; /* Take most of the viewport height */
+            padding: 2vh 2vw; /* Use viewport units for padding */
+            box-sizing: border-box; /* Include padding in width/height */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Align items to the center vertically */
+            padding-bottom: 1.5vh; /* Use viewport height for padding */
+            border-bottom: 1px solid #e0e0e0; /* Subtle separator */
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1vw; /* Use viewport width for gaps */
+            cursor: pointer; /* Make it clickable for logo change */
+        }
+        .logo {
+            width: 4vw; /* Use viewport width for logo size */
+            height: 4vw; /* Use viewport width for logo size */
+            background-color: #007bff; /* Blue background for the logo circle */
+            border-radius: 8px; /* Slightly rounded corners for the logo box */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2vw; /* Use viewport width for font size */
+            overflow: hidden; /* Hide overflow for image */
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensure logo fits within the box */
+        }
+        .date-time {
+            text-align: right;
+            font-size: 0.9vw; /* Use viewport width for font size */
+            color: #007bff; /* Blue color for date and time */
+            margin-left: auto; /* Push to the right */
+        }
+        .date-time .day {
+            font-weight: bold;
+            font-size: 1.2vw; /* Larger font for 'JUMAT' */
+        }
+        .date-time .time {
+            font-weight: bold;
+            font-size: 2vw; /* Even larger font for '08.35' */
+        }
+        .date-time .full-date {
+            font-size: 0.8vw;
+            color: #555; /* Slightly muted color for the full date */
+        }
+        .stamping-c-line {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.5vw; /* Larger font for this title */
+            color: #333;
+            margin-bottom: 1vh; /* Space below this title */
+        }
+        .job-title {
+            background-color: #d1d5db; /* Gray background, matching the image's job bar */
+            color: #333;
+            padding: 1.5vh; /* Use viewport height for padding */
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2vw; /* Use viewport width for font size */
+            border-radius: 10px;
+            cursor: pointer; /* Make it clickable */
+            transition: background-color 0.2s ease;
+        }
+        .job-title:hover {
+            background-color: #c0c4c9; /* Slightly darker on hover */
+        }
+        .main-content {
+            display: flex;
+            flex-grow: 1; /* Allow content to grow and fill available space */
+            flex-wrap: nowrap; /* Prevent wrapping for landscape layout */
+            gap: 2.5vw; /* Use viewport width for gaps */
+        }
+        .left-panel {
+            flex: 1; /* Take 1 part of the available space */
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            gap: 2.5vh; /* Use viewport height for gaps between counter boxes and history */
+            min-width: 30vw; /* Ensure left panel has a minimum width */
+        }
+        /* Consistent light gray background for all main content boxes */
+        .counter-box, .total-counter-box, .history-section, .right-panel {
+            background-color: #E8E8E8; /* Lighter gray, closer to image */
+            border-radius: 10px;
+            padding: 2vh; /* Use viewport height for padding */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+        }
+        .counter-box, .total-counter-box {
+            display: flex;
+            flex-direction: column;
+            gap: 1vh; /* Use viewport height for gaps */
+            flex-grow: 1; /* Allow counter boxes to grow to fill space */
+        }
+        .counter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1vw; /* Use viewport width for font size */
+        }
+        .counter-value {
+            background-color: #ffffff; /* White background for the counter display */
+            padding: 1.5vh; /* Use viewport height for padding */
+            border-radius: 8px;
+            font-size: 2.5vw; /* Use viewport width for font size */
+            font-weight: bold;
+            text-align: center;
+            color: #007bff; /* Blue color for counter numbers */
+            flex-grow: 1; /* Allow counter value to grow */
+            display: flex; /* For centering content vertically */
+            justify-content: center;
+            align-items: center;
+        }
+        .reset-button {
+            background-color: #4a5568; /* Darker gray, matching the image's reset button */
+            color: white;
+            padding: 0.8vh 1.5vw; /* Use viewport units for padding */
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 0.8vw; /* Use viewport width for font size */
+            border: none;
+        }
+        .reset-button:hover {
+            background-color: #2d3748;
+        }
+        .history-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh; /* Use viewport height for gaps */
+            flex-grow: 2; /* Allow history section to grow more */
+        }
+        .history-section h3 {
+            font-size: 1.2vw; /* Use viewport width for font size */
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9vw; /* Use viewport width for font size */
+        }
+        .history-table th, .history-table td {
+            padding: 1vh; /* Use viewport height for padding */
+            text-align: left;
+            border-bottom: 1px solid #cbd5e0; /* Light border for table rows */
+        }
+        .history-table th {
+            background-color: #a0aec0; /* Medium gray, matching the image's table header */
+            color: white;
+            font-weight: 600;
+            border-radius: 5px 5px 0 0; /* Rounded top corners for header */
+        }
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+        .history-table td:last-child {
+            text-align: right;
+            background-color: #ef4444; /* Red background for counter values in history */
+            color: white;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .right-panel {
+            flex: 2; /* Take 2 parts of the available space */
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh; /* Use viewport height for gaps */
+            justify-content: center;
+            align-items: center;
+            min-width: 40vw; /* Ensure right panel has a minimum width */
+        }
+        .video-container {
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio (height relative to width) */
+            position: relative;
+            background-color: #a0aec0; /* Placeholder background */
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer; /* Make video clickable */
+        }
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1vw; /* Use viewport width for gaps */
+            width: 100%;
+            padding-top: 1vh; /* Use viewport height for padding */
+        }
+        .play-button {
+            background-color: #007bff; /* Blue play button */
+            color: white;
+            border-radius: 50%;
+            width: 4vw; /* Use viewport width for button size */
+            height: 4vw; /* Use viewport width for button size */
+            max-width: 40px; /* Max size for smaller screens */
+            max-height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.5vw; /* Use viewport width for font size */
+        }
+        .progress-bar {
+            flex-grow: 1;
+            height: 0.8vh; /* Use viewport height for height */
+            background-color: #cbd5e0; /* Light gray progress bar */
+            border-radius: 4px;
+        }
+        .time-display {
+            font-size: 0.9vw;
+            color: #555;
+        }
+        .simulate-esp-button {
+            background-color: #28a745; /* Green button */
+            color: white;
+            padding: 1vh 2vw; /* Use viewport units for padding */
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1vw; /* Use viewport width for font size */
+            border: none;
+            margin-top: 1.5vh; /* Use viewport height for margin */
+            align-self: center; /* Center the button */
+        }
+        .simulate-esp-button:hover {
+            background-color: #218838;
+        }
+
+        /* Modal Styles - Adjusted for full screen */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            padding: 3vh 3vw; /* Use viewport units for padding */
+            border-radius: 10px;
+            width: 70vw; /* Relative width for modal */
+            max-width: 500px; /* Max width for smaller screens */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2vh; /* Use viewport height for gaps */
+        }
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 1vh;
+            right: 1.5vw;
+            font-size: 2.8vw; /* Relative font size */
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .job-list-item {
+            padding: 1vh; /* Use viewport height for padding */
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 0.5vh; /* Use viewport height for margin */
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 1vw; /* Relative font size */
+        }
+        .job-list-item:hover {
+            background-color: #f0f0f0;
+        }
+        .job-list-item.selected {
+            background-color: #e0f2fe; /* Light blue for selected job */
+            border-color: #90cdf4;
+            font-weight: bold;
+        }
+        .add-job-input {
+            width: calc(100% - 8vw); /* Adjust width with viewport units */
+            padding: 1vh; /* Use viewport height for padding */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1vw; /* Relative font size */
+        }
+        .add-job-button {
+            padding: 1vh 1.5vw; /* Use viewport units for padding */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1vw; /* Relative font size */
+        }
+
+        /* Responsive adjustments for smaller screens (e.g., mobile in portrait) */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 98vw;
+                height: auto; /* Allow height to adjust */
+                min-height: 98vh; /* Ensure it still takes most of the screen */
+                padding: 2vh 2vw;
+            }
+            .main-content {
+                flex-direction: column;
+                flex-wrap: wrap; /* Allow wrapping on small screens */
+                gap: 2.5vh;
+            }
+            .left-panel, .right-panel {
+                min-width: unset; /* Remove min-width */
+                width: 100%; /* Take full width */
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1vh;
+            }
+            .date-time {
+                text-align: left;
+                font-size: 1.5vh; /* Adjust font size for smaller screens */
+            }
+            .date-time .day, .date-time .time, .date-time .full-date {
+                font-size: unset; /* Reset viewport units for better mobile readability */
+            }
+            .job-title {
+                font-size: 2vh;
+            }
+            .logo {
+                width: 8vh; /* Larger logo on mobile */
+                height: 8vh;
+                font-size: 2vh;
+            }
+            .counter-header, .history-section h3, .history-table, .simulate-esp-button,
+            .play-button, .time-display, .modal-content h2, .job-list-item,
+            .add-job-input, .add-job-button {
+                font-size: unset; /* Reset viewport units for better mobile readability */
+            }
+            .counter-value {
+                font-size: 4vh; /* Larger counter value on mobile */
+            }
+            .reset-button {
+                font-size: 1.5vh;
+            }
+            .modal-content {
+                width: 95vw;
+                padding: 3vh 3vw;
+            }
+            .close-button {
+                font-size: 4vh;
+            }
+            .play-button {
+                width: 6vh;
+                height: 6vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section" onclick="document.getElementById('logoFileInput').click()">
+                <div class="logo">
+                    <img id="currentLogo" src="https://placehold.co/40x40/007bff/ffffff?text=FTI" alt="FTI Logo">
+                </div>
+                <div>
+                    <div class="font-bold text-lg">FUJI TECHNICA INDONESIA</div>
+                    <div class="text-sm text-gray-600">member of ASTRA</div>
+                </div>
+            </div>
+            <input type="file" id="logoFileInput" accept="image/*" style="display: none;">
+
+            <div class="date-time">
+                <div class="day" id="currentDay"></div>
+                <div class="time" id="currentTime"></div>
+                <div class="full-date" id="currentFullDate"></div>
+            </div>
+        </div>
+
+        <div class="stamping-c-line">STAMPING C-LINE</div>
+        <div id="jobTitleDisplay" class="job-title" onclick="openJobModal()">JOB : N 4017/8</div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="counter-box">
+                    <div class="counter-header">
+                        <span>Counter</span>
+                        <button class="reset-button" onclick="resetCounter('counter')">RESET</button>
+                    </div>
+                    <div id="counterValue" class="counter-value">0000</div>
+                    <button class="simulate-esp-button" onclick="incrementCounter()">Simulasi Input ESP</button>
+                </div>
+
+                <div class="total-counter-box">
+                    <div class="counter-header">
+                        <span>Total Counter</span>
+                        <button class="reset-button" onclick="resetCounter('totalCounter')">RESET</button>
+                    </div>
+                    <div id="totalCounterValue" class="counter-value">0000</div>
+                </div>
+
+                <div class="history-section">
+                    <h3 class="font-bold text-lg mb-3 text-gray-700">History</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>JOB</th>
+                                <th>Counter</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="video-container" onclick="document.getElementById('videoFileInput').click()">
+                    <video id="mainVideo" loop muted autoplay>
+                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        Browser Anda tidak mendukung tag video.
+                    </video>
+                </div>
+                <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
+
+                <div class="video-controls">
+                    <div class="play-button" id="playPauseButton">&#9658;</div> <div class="progress-bar"></div>
+                    <div class="time-display">00:00,00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="jobModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeJobModal()">&times;</span>
+            <h2 class="text-xl font-bold mb-4">Pilih atau Tambah Job</h2>
+
+            <div class="mb-4">
+                <h3 class="font-semibold mb-2">Daftar Job:</h3>
+                <div id="jobListContainer" class="max-h-60 overflow-y-auto border border-gray-300 rounded-md p-2">
+                    </div>
+            </div>
+
+            <div>
+                <h3 class="font-semibold mb-2">Tambah Job Baru:</h3>
+                <div class="flex gap-2">
+                    <input type="text" id="newJobInput" class="add-job-input" placeholder="Nama Job Baru">
+                    <button class="add-job-button" onclick="addNewJob()">Tambah</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let counter = 0;
+        let totalCounter = 0;
+        let currentJob = "N 4017/8"; // Initial job from the image
+        let jobList = ["N 4017/8", "63141 D26 100", "W/H D55", "MMKI OLD", "61627/8"]; // Initial jobs
+        let historyData = []; // Array to store history { job: "...", quantity: ... }
+
+        const MAX_HISTORY_ITEMS = 4; // Max items in history table
+
+        // --- Real-time Clock Functions ---
+        function updateRealTime() {
+            const now = new Date();
+            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const dayName = days[now.getDay()];
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0'); // Added seconds for more real-time feel
+            const dayOfMonth = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const year = now.getFullYear();
+
+            document.getElementById('currentDay').innerText = dayName;
+            document.getElementById('currentTime').innerText = `${hours}.${minutes}`; // Format as HH.MM
+            document.getElementById('currentFullDate').innerText = `${dayOfMonth}-${month}-${year}`;
+        }
+
+        // --- Counter Functions ---
+        /**
+         * Updates the display of a counter value, padding with leading zeros.
+         * @param {string} id - The ID of the HTML element to update.
+         * @param {number} value - The new counter value.
+         */
+        function updateCounterDisplay(id, value) {
+            document.getElementById(id).innerText = String(value).padStart(4, '0');
+        }
+
+        /**
+         * Resets the specified counter to 0 and updates its display.
+         * @param {string} type - The type of counter to reset ('counter' or 'totalCounter').
+         */
+        function resetCounter(type) {
+            if (type === 'counter') {
+                counter = 0;
+                updateCounterDisplay('counterValue', counter);
+            } else if (type === 'totalCounter') {
+                totalCounter = 0;
+                updateCounterDisplay('totalCounterValue', totalCounter);
+            }
+        }
+
+        /**
+         * Increments the main counter and total counter (simulating ESP input).
+         */
+        function incrementCounter() {
+            counter++;
+            totalCounter++;
+            updateCounterDisplay('counterValue', counter);
+            updateCounterDisplay('totalCounterValue', totalCounter);
+        }
+
+        // --- Job Management Functions ---
+        /**
+         * Opens the job selection modal and populates the job list.
+         */
+        function openJobModal() {
+            document.getElementById('jobModal').style.display = 'flex';
+            renderJobList();
+        }
+
+        /**
+         * Closes the job selection modal.
+         */
+        function closeJobModal() {
+            document.getElementById('jobModal').style.display = 'none';
+        }
+
+        /**
+         * Renders the list of available jobs in the modal.
+         */
+        function renderJobList() {
+            const container = document.getElementById('jobListContainer');
+            container.innerHTML = ''; // Clear existing list
+
+            jobList.forEach(job => {
+                const div = document.createElement('div');
+                div.className = `job-list-item ${job === currentJob ? 'selected' : ''} rounded-md`;
+                div.innerText = job;
+                div.onclick = () => selectJob(job);
+                container.appendChild(div);
+            });
+        }
+
+        /**
+         * Adds a new job to the job list.
+         */
+        function addNewJob() {
+            const input = document.getElementById('newJobInput');
+            const newJobName = input.value.trim();
+
+            if (newJobName && !jobList.includes(newJobName)) {
+                jobList.push(newJobName);
+                input.value = ''; // Clear input
+                renderJobList(); // Re-render the list
+                selectJob(newJobName); // Automatically select the new job
+            } else if (newJobName && jobList.includes(newJobName)) {
+                console.log("Job already exists.");
+                selectJob(newJobName); // Select existing job if typed again
+            }
+        }
+
+        /**
+         * Selects a job, updates the display, resets the main counter, and records history.
+         * @param {string} jobName - The name of the job to select.
+         */
+        function selectJob(jobName) {
+            // Only add to history if a previous job was active and counter is not zero
+            if (currentJob && counter > 0) {
+                addHistoryEntry(currentJob, counter);
+            }
+
+            currentJob = jobName;
+            document.getElementById('jobTitleDisplay').innerText = `JOB : ${currentJob}`;
+            resetCounter('counter'); // Reset main counter
+            closeJobModal(); // Close the modal
+            renderJobList(); // Update selected state in modal if it's reopened
+        }
+
+        // --- History Functions ---
+        /**
+         * Adds a new entry to the history and updates the display.
+         * Keeps the history list to a maximum of MAX_HISTORY_ITEMS.
+         * @param {string} job - The job name for the history entry.
+         * @param {number} quantity - The quantity for the history entry.
+         */
+        function addHistoryEntry(job, quantity) {
+            historyData.unshift({ job: job, quantity: quantity }); // Add to the beginning (latest first)
+
+            // Remove oldest entries if history exceeds MAX_HISTORY_ITEMS
+            if (historyData.length > MAX_HISTORY_ITEMS) {
+                historyData.pop();
+            }
+            renderHistoryTable();
+        }
+
+        /**
+         * Renders the history table based on the historyData array.
+         */
+        function renderHistoryTable() {
+            const tableBody = document.getElementById('historyTableBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            historyData.forEach(entry => {
+                const row = tableBody.insertRow();
+                const jobCell = row.insertCell();
+                const counterCell = row.insertCell();
+
+                jobCell.innerText = entry.job;
+                counterCell.innerText = String(entry.quantity).padStart(4, '0'); // Pad with zeros
+                counterCell.className = 'bg-red-500 text-white font-bold rounded-md text-right'; // Apply red background
+            });
+        }
+
+        // --- Video Player Functions ---
+        const mainVideo = document.getElementById('mainVideo');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const videoFileInput = document.getElementById('videoFileInput');
+
+        /**
+         * Toggles play/pause for the video.
+         */
+        playPauseButton.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent video file input from opening
+            if (mainVideo.paused || mainVideo.ended) {
+                mainVideo.play();
+                playPauseButton.innerHTML = '&#10074;&#10074;'; // Pause icon
+            } else {
+                mainVideo.pause();
+                playPauseButton.innerHTML = '&#9658;'; // Play icon
+            }
+        });
+
+        /**
+         * Updates play/pause button icon when video state changes.
+         */
+        mainVideo.addEventListener('play', () => {
+            playPauseButton.innerHTML = '&#10074;&#10074;'; // Pause icon
+        });
+
+        mainVideo.addEventListener('pause', () => {
+            playPauseButton.innerHTML = '&#9658;'; // Play icon
+        });
+
+        mainVideo.addEventListener('ended', () => {
+            playPauseButton.innerHTML = '&#9658;'; // Play icon
+        });
+
+        /**
+         * Handles file selection for video.
+         */
+        videoFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const fileURL = URL.createObjectURL(file);
+                mainVideo.src = fileURL;
+                mainVideo.load(); // Load the new video
+                mainVideo.play(); // Start playing automatically
+            }
+        });
+
+        // --- Logo Customization Functions ---
+        const logoFileInput = document.getElementById('logoFileInput');
+        const currentLogo = document.getElementById('currentLogo');
+
+        /**
+         * Handles file selection for logo.
+         */
+        logoFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentLogo.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // --- Initial Setup ---
+        window.onload = function() {
+            updateCounterDisplay('counterValue', counter);
+            updateCounterDisplay('totalCounterValue', totalCounter);
+            renderHistoryTable(); // Render initial empty history or pre-filled if any
+
+            // Start real-time clock
+            updateRealTime(); // Initial call
+            setInterval(updateRealTime, 1000); // Update every second
+
+            // Ensure video starts playing on load, if autoplay is allowed by browser
+            mainVideo.play().catch(error => {
+                console.log("Autoplay prevented:", error);
+                // User might need to click play button due to browser autoplay policies
+            });
+        };
+
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            const jobModal = document.getElementById('jobModal');
+            if (event.target == jobModal) {
+                closeJobModal();
+            }
+        }
+    </script>
+</body>
+</html>
